@@ -1,0 +1,440 @@
+{
+  "log": {
+    "level": "warn",
+    "output": "box.log",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns-remote",
+        "address": "udp://1.1.1.1",
+        "address_resolver": "dns-direct"
+      },
+      {
+        "tag": "dns-trick-direct",
+        "address": "https://sky.rethinkdns.com/",
+        "detour": "direct-fragment"
+      },
+      {
+        "tag": "dns-direct",
+        "address": "1.1.1.1",
+        "address_resolver": "dns-local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-local",
+        "address": "local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "domain": "connectivitycheck.gstatic.com",
+        "server": "dns-remote",
+        "rewrite_ttl": 300000
+      },
+      {
+        "domain_suffix": ".ir",
+        "server": "dns-direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ir",
+          "geosite-ir"
+        ],
+        "server": "dns-direct"
+      }
+    ],
+    "final": "dns-remote",
+    "static_ips": {
+      "sky.rethinkdns.com": [
+        
+      ]
+    },
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "mtu": 900000,
+      "inet4_address": "172.19.0.1/28",
+      "inet6_address": "fdfe:dcba:9876::1/126",
+      "auto_route": true,
+      "strict_route": true,
+      "endpoint_independent_nat": true,
+      "stack": "mixed",
+      "sniff": true,
+      "sniff_override_destination": true
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 12334,
+      "sniff": true,
+      "sniff_override_destination": true
+    },
+    {
+      "type": "direct",
+      "tag": "dns-in",
+      "listen": "127.0.0.1",
+      "listen_port": 16450
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "select",
+      "outbounds": [
+        "auto",
+        "🇺🇸美国专线01",
+        "🇺🇸美国专线02",
+        "🇦🇺澳大利亚专线01",
+        "🇦🇺澳大利亚专线02",
+        "🇰🇷韩国专线01",
+        "🇮🇳印度专线01",
+        "🇮🇳印度专线02",
+        "🇧🇷巴西专线01",
+        "🇧🇷巴西专线02",
+        "🇺🇸美国高速01",
+        "🇺🇸美国高速02",
+        "🇮🇳印度高速01",
+        "🇦🇺澳大利亚高速01",
+        "🇦🇺澳大利亚高速02",
+        "🇫🇷法国高速01"
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": [
+        "🇺🇸美国专线01",
+        "🇺🇸美国专线02",
+        "🇦🇺澳大利亚专线01",
+        "🇦🇺澳大利亚专线02",
+        "🇰🇷韩国专线01",
+        "🇮🇳印度专线01",
+        "🇮🇳印度专线02",
+        "🇧🇷巴西专线01",
+        "🇧🇷巴西专线02",
+        "🇺🇸美国高速01",
+        "🇺🇸美国高速02",
+        "🇮🇳印度高速01",
+        "🇦🇺澳大利亚高速01",
+        "🇦🇺澳大利亚高速02",
+        "🇫🇷法国高速01"
+      ],
+      "url": "http://connectivitycheck.gstatic.com/generate_204",
+      "interval": "10m0s",
+      "tolerance": 1,
+      "idle_timeout": "30m0s"
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇺🇸美国专线01",
+      "server": "129.159.97.206",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇺🇸美国专线02",
+      "server": "141.148.182.2",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇦🇺澳大利亚专线01",
+      "server": "192.9.165.40",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇦🇺澳大利亚专线02",
+      "server": "192.9.179.140",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇰🇷韩国专线01",
+      "server": "129.154.53.232",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇮🇳印度专线01",
+      "server": "140.245.27.220",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇮🇳印度专线02",
+      "server": "141.148.222.181",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇧🇷巴西专线01",
+      "server": "168.75.68.172",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "hysteria2",
+      "tag": "🇧🇷巴西专线02",
+      "server": "144.22.197.28",
+      "server_port": 51000,
+      "password": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "tls": {
+        "enabled": true,
+        "server_name": "cn.cremedelamer.com",
+        "insecure": true
+      }
+    },
+    {
+      "type": "vless",
+      "tag": "🇺🇸美国高速01",
+      "server": "129.146.219.12",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "🇺🇸美国高速02",
+      "server": "129.153.107.224",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "🇮🇳印度高速01",
+      "server": "141.148.196.78",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "🇦🇺澳大利亚高速01",
+      "server": "168.138.100.81",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "🇦🇺澳大利亚高速02",
+      "server": "158.178.142.32",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "🇫🇷法国高速01",
+      "server": "84.235.235.105",
+      "server_port": 443,
+      "uuid": "519d661a-a378-4bbd-9e6c-af284ba19c27",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.mirrors.download.xn--mirrors-oj8km52txc7d.com",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "direct",
+      "tag": "direct-fragment",
+      "tls_fragment": {
+        "enabled": true,
+        "size": "10-30",
+        "sleep": "2-8"
+      }
+    },
+    {
+      "type": "direct",
+      "tag": "bypass"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "dns-in",
+        "outbound": "dns-out"
+      },
+      {
+        "port": 53,
+        "outbound": "dns-out"
+      },
+      {
+        "process_name": [
+          "Hiddify",
+          "Hiddify.exe",
+          "HiddifyCli",
+          "HiddifyCli.exe"
+        ],
+        "outbound": "bypass"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "bypass"
+      },
+      {
+        "domain_suffix": ".ir",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ir",
+          "geosite-ir"
+        ],
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-ir",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geoip-ir.srs",
+        "update_interval": "120h0m0s"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-ir",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geosite-ir.srs",
+        "update_interval": "120h0m0s"
+      }
+    ],
+    "final": "select",
+    "auto_detect_interface": true,
+    "override_android_vpn": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "clash.db"
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:16756",
+      "secret": "rBA7n5Rw1XA1E8ON"
+    }
+  }
+}
